@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Web Shop</title>
+  <meta name="description" content="A modern HTML shop – demo project" />
+  <!-- Tailwind CSS via CDN for styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .expandable {
+      transition: max-height 0.35s cubic-bezier(.4,0,.2,1), opacity 0.3s;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <header class="py-8 mb-8 bg-white shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+      <h1 class="text-3xl font-extrabold tracking-tight text-gray-900 mb-2 md:mb-0">Awesome Web Shop</h1>
+      <span class="text-md text-gray-600">10 items available • Desktop Layout</span>
+    </div>
+  </header>
+  <main>
+    <div class="max-w-6xl mx-auto px-4">
+      <div id="shop-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
+    </div>
+  </main>
+  <footer class="mt-16 pb-12 pt-6 text-center text-gray-400 text-sm">
+    © 2025 Awesome Shop – Powered by static HTML & Tailwind CSS
+  </footer>
+  <script>
+    // Utility: format as USD
+    function formatPrice(price) {
+      return "$" + price.toFixed(2);
+    }
+
+    // Fetch items and populate shop
+    fetch('items.json')
+      .then(res => res.json())
+      .then(items => {
+        const grid = document.getElementById('shop-grid');
+        if (!Array.isArray(items)) { grid.innerHTML = "<p>No products found.</p>"; return; }
+
+        // Create HTML for each item
+        grid.innerHTML = items.map((item, idx) => `
+          <div class="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-shadow duration-200 flex flex-col">
+            <div class="relative w-full pb-[66%] bg-gray-100">
+              <img src="${item.image}" alt="${item.name}" class="absolute w-full h-full object-cover top-0 left-0" loading="lazy"/>
+            </div>
+            <div class="p-5 flex-1 flex flex-col">
+              <h2 class="text-xl font-semibold mb-1 text-gray-800">${item.name}</h2>
+              <p class="text-gray-500 text-sm mb-2">${item.description}</p>
+              <div class="flex items-center justify-between mt-auto mb-4">
+                <span class="font-bold text-lg text-indigo-600">${formatPrice(item.price)}</span>
+                <span class="text-xs font-medium bg-gray-100 px-3 py-1 rounded-full text-gray-700">${item.stock > 0 ? item.stock + ' in stock' : 'Out of stock'}</span>
+              </div>
+              <button type="button" data-expand-id="${item.id}" class="expand-btn rounded bg-indigo-50 text-indigo-700 px-4 py-2 text-sm font-semibold hover:bg-indigo-100 transition mt-2">
+                Show Information
+              </button>
+              <div id="info-${item.id}" class="expandable max-h-0 opacity-0 mt-3 text-gray-700 text-sm" aria-hidden="true">
+                <div class="border-t border-gray-200 pt-2">${item.information}</div>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+        // Add expand/collapse behavior
+        document.querySelectorAll('.expand-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-expand-id');
+            const infoDiv = document.getElementById('info-' + id);
+            const expanded = infoDiv.classList.toggle('open');
+            if (expanded) {
+              infoDiv.style.maxHeight = infoDiv.scrollHeight + "px";
+              infoDiv.style.opacity = "1";
+              btn.textContent = "Hide Information";
+              infoDiv.setAttribute('aria-hidden', "false");
+            } else {
+              infoDiv.style.maxHeight = "0px";
+              infoDiv.style.opacity = "0";
+              btn.textContent = "Show Information";
+              infoDiv.setAttribute('aria-hidden', "true");
+            }
+          });
+        });
+
+        // Smooth animation (on open, set maxHeight)
+        document.querySelectorAll('.expandable').forEach(div => {
+          div.addEventListener('transitionend', () => {
+            if (!div.classList.contains('open')) {
+              div.style.maxHeight = "0px";
+            }
+          });
+        });
+      })
+      .catch(e => {
+        document.getElementById('shop-grid').innerHTML = "<p class='text-red-500'>Failed to load products.</p>";
+      });
+  </script>
+</body>
+</html>
