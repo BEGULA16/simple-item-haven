@@ -15,21 +15,28 @@
     }
   </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gray-50 min-h-screen flex flex-col">
+  <!-- Header / Navbar -->
   <header class="py-8 mb-8 bg-white shadow-sm">
-    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+    <nav class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center" aria-label="Main Navigation">
       <h1 class="text-3xl font-extrabold tracking-tight text-gray-900 mb-2 md:mb-0">Awesome Web Shop</h1>
       <span class="text-md text-gray-600">10 items available • Desktop Layout</span>
-    </div>
+    </nav>
   </header>
-  <main>
-    <div class="max-w-6xl mx-auto px-4">
+
+  <!-- Main Shop Grid -->
+  <main class="flex-1">
+    <section class="max-w-6xl mx-auto px-4">
       <div id="shop-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
-    </div>
+    </section>
   </main>
-  <footer class="mt-16 pb-12 pt-6 text-center text-gray-400 text-sm">
+
+  <!-- Footer -->
+  <footer class="mt-16 pb-12 pt-6 text-center text-gray-400 text-sm bg-white shadow-inner">
     © 2025 Awesome Shop – Powered by static HTML & Tailwind CSS
   </footer>
+
+  <!-- Shop JS -->
   <script>
     // Utility: format as USD
     function formatPrice(price) {
@@ -101,3 +108,4 @@
   </script>
 </body>
 </html>
+
